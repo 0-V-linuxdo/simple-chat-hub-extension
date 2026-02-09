@@ -1,0 +1,72 @@
+{
+  "name": "__MSG_extension_name__",
+  "description": "__MSG_extension_description__",
+  "version": "2.0.0",
+  "homepage_url": "https://chathub.aipilot.cc/",
+  "manifest_version": 3,
+  "default_locale": "en",
+  "icons": {
+    "16": "img/logo-16.png",
+    "32": "img/logo-34.png",
+    "48": "img/logo-48.png",
+    "128": "img/logo-128.png"
+  },
+  "action": {
+    "default_icon": "img/logo-48.png"
+  },
+  "options_page": "chatHub.html",
+  "background": {
+    "scripts": [
+      "service-worker-loader.js"
+    ],
+    "type": "module"
+  },
+  "content_scripts": [],
+  "web_accessible_resources": [
+    {
+      "matches": [],
+      "resources": [
+        "img/logo-16.png",
+        "img/logo-34.png",
+        "img/logo-48.png",
+        "img/logo-128.png"
+      ]
+    },
+    {
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "resources": [
+        "assets/chunk-936fa2ae.js",
+        "assets/chunk-a783bd53.js",
+        "assets/chunk-b76f4e26.js"
+      ]
+    }
+  ],
+  "permissions": [
+    "storage",
+    "declarativeNetRequest",
+    "declarativeNetRequestWithHostAccess",
+    "scripting"
+  ],
+  "declarative_net_request": {
+    "rule_resources": [
+      {
+        "id": "ruleset",
+        "enabled": true,
+        "path": "rules.json"
+      }
+    ]
+  },
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "chathub@aipilot.cc",
+      "strict_min_version": "109.0"
+    }
+  }
+}
+
