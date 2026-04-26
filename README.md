@@ -1,22 +1,38 @@
-# Simple Chat Hub 2.4.0 Mod Notes
+# Simple Chat Hub 2.4.0 Mod 功能修改
 
-This branch adds a Chrome Mod build based on the Simple Chat Hub 2.4.0 CRX payload.
+本分支只记录相对原版 Simple Chat Hub 2.4.0 的功能修改。
 
-## Included Artifacts
+## Optimize Prompt
 
-- `Mod/`: unpacked Chrome extension payload for local loading.
-- `Mod.zip`: zipped Mod payload.
-- `Mod.crx`: CRX3 package signed with the existing Mod key to keep the extension ID stable.
+- 设置面板新增 `Optimize Prompt` 管理入口。
+- 新增自定义优化配置：
+  - `URL`
+  - `Key`
+  - `Model`
+  - `Template`
+- 将原内置 `/v1/prompt/optimize` 调用改为 OpenAI-compatible `chat/completions` 调用。
+- 优化请求使用用户配置的 endpoint、API key、model 和 prompt template。
+- 未配置 API Key 时显示配置提示，不发起优化请求。
+- 请求失败时显示优化失败提示。
 
-## Mod Changes
+## 配置导入 / 导出
 
-- Added custom Optimize Prompt configuration fields for endpoint, API key, model, and prompt template.
-- Replaced the built-in prompt optimization request with an OpenAI-compatible `chat/completions` request using the saved Optimize Prompt settings.
-- Added settings import and export buttons for `options`, `customConfig`, `promptLibrary`, and `shortcutConfig`.
-- Disabled the extension's own Google Analytics Measurement Protocol telemetry.
-- Kept `manifest.update_url` unchanged because it is the Chrome extension update URL, not Google Analytics telemetry.
+- 设置面板底部新增 `Export Config` 按钮。
+- 设置面板底部新增 `Import Config` 按钮。
+- 导出配置包含：
+  - `options`
+  - `customConfig`
+  - `promptLibrary`
+  - `shortcutConfig`
+- 导入配置时只写入 JSON 中存在的已知配置项。
+- 兼容旧版导出文件缺少 `shortcutConfig` 的情况。
+- 导入成功后显示提示并刷新页面。
+- 导入失败时显示错误提示。
 
-## Notes
+## Google Analytics 遥测
 
-- The Mod targets the Chrome MV3 build only.
-- External chat sites embedded by the extension are not modified or blocked by the telemetry change.
+- 屏蔽扩展自身的 Google Analytics Measurement Protocol 遥测。
+- 停止发送 page view、install、log、click、keypress、error 等 GA 事件。
+- 安装时不再生成新的 GA `clientId`。
+- 安装时清理旧的 `clientId` 和 `sessionData` 遥测标识。
+- 保留 `manifest.update_url`，因为它是 Chrome 扩展更新地址，不是 Google Analytics 遥测。
