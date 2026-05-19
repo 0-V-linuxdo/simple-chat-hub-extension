@@ -1,115 +1,123 @@
 # Simple Chat Hub 2.4.0 Mod
 
-This branch contains a Chrome MV3 Mod build of Simple Chat Hub based on the
-`2.4.0.14` extension payload.
+本分支是基于 Simple Chat Hub `2.4.0.14` Chrome MV3 扩展包制作的 Mod 版本。
 
-Simple Chat Hub aggregates mainstream AI chat platforms into one browser
-extension. It keeps the original multi-platform chat workflow, then adds custom
-API-profile powered prompt optimization, conversation summary/ask tooling,
-configuration backup, and telemetry reduction.
+Simple Chat Hub 是一个聚合多个主流 AI 聊天平台的浏览器扩展。它保留原版的多平台同屏聊天、提示词库、布局、截图和快捷键能力，并在此基础上加入 API Profiles、提示词优化、Summary / Ask 面板、配置导入导出，以及扩展自身 Google Analytics 遥测屏蔽。
 
-## Package Layout
+## 产物结构
 
-- `Mod/`: unpacked Chrome MV3 extension payload for developer-mode loading.
-- `Mod/MOD_NOTES.md`: internal Mod notes; this file is documentation only and is
-  not part of the runtime behavior.
-- `dist/Simple-Chat-Hub-2.4.0.14.crx`: signed CRX3 package for installation.
-- `CUSTOM_CONFIG_EXAMPLE.md`: examples for adding custom chat platforms.
+| 路径 | 作用 | 说明 |
+| --- | --- | --- |
+| `Mod/` | 解包后的 Chrome MV3 扩展目录 | 可在开发者模式中通过“加载已解压的扩展程序”安装 |
+| `Mod/MOD_NOTES.md` | Mod 说明记录 | 仅作为仓库说明文件，不参与扩展运行逻辑 |
+| `dist/Simple-Chat-Hub-2.4.0.14.crx` | 已签名 CRX3 安装包 | 用于拖入 Chromium 扩展管理页安装 |
+| `CUSTOM_CONFIG_EXAMPLE.md` | 自定义平台配置示例 | 用于参考如何添加自定义聊天平台 |
 
-The signed CRX keeps the extension ID stable:
+已签名 CRX 保持固定扩展 ID：
 
 ```text
 jhhdlimojbejlcmknnijakeokoggdhgb
 ```
 
-## Original Features Kept
+## 原版保留能力
 
-- Send one prompt to multiple AI chat platforms and compare replies side by side.
-- Use built-in chat platforms such as ChatGPT, Gemini, Grok, Kimi, DouBao, Qwen,
-  and other supported services.
-- Add custom chat platforms through custom config.
-- Arrange chat apps with layout presets, tabs, fullscreen mode, and per-panel
-  actions.
-- Use the prompt library, keyboard shortcuts, theme/language settings, and
-  screenshot tools from the original extension.
+| 能力 | 当前状态 |
+| --- | --- |
+| 多平台同屏聊天 | 保留，可同时向多个 AI 平台发送提示词并对比回复 |
+| 内置平台 | 保留 ChatGPT、Gemini、Grok、Kimi、DouBao、Qwen 等原有平台 |
+| 自定义平台 | 保留，可通过 Custom Config 添加平台 |
+| 布局管理 | 保留布局预设、分组、标签页、全屏和窗口顺序调整 |
+| 提示词库 | 保留提示词添加、编辑、排序和一键插入 |
+| 快捷键 | 保留并扩展快捷键配置 |
+| 截图 | 保留单窗口截图、移动/桌面视图截图和对比截图 |
+| 主题与语言 | 保留亮色/暗色主题和多语言设置 |
 
-## Mod Features
+## Mod 功能总览
 
-### API Profiles
+| 功能 | 说明 |
+| --- | --- |
+| API Profiles | 统一管理 API endpoint、API key、model 和配置名称 |
+| Optimize Prompt | 改为使用 OpenAI-compatible `chat/completions` 请求 |
+| Summary / Ask Panel | 新增可拖动、可调整宽度的总结/提问面板 |
+| ChatGPT 采集修正 | 优先使用每轮消息自己的复制按钮，避免不安全的页面文本兜底 |
+| Kagi 采集修正 | 以解析出的用户问题为准，只补充匹配当前轮次的助手回复 |
+| 配置导入 / 导出 | 支持备份和恢复 `options`、`customConfig`、`promptLibrary`、`shortcutConfig` |
+| 遥测屏蔽 | 停止扩展自身 Google Analytics Measurement Protocol 事件上报 |
 
-- Adds reusable API Profiles with custom name, endpoint, API key, and model.
-- Uses API Profiles for both Optimize Prompt and Summary/Ask.
-- Normalizes and migrates older Optimize/Summary settings into the shared profile
-  format when existing settings are loaded.
+## API Profiles
 
-### Optimize Prompt
+- 新增可复用的 API Profiles。
+- 每个 Profile 可配置名称、endpoint、API key 和 model。
+- Optimize Prompt 与 Summary / Ask 共用同一套 API Profile 配置。
+- 加载旧设置时，会将旧的 Optimize / Summary 配置迁移到共享 Profile 结构。
 
-- Replaces the built-in optimization request with an OpenAI-compatible
-  `chat/completions` request.
-- Uses the selected API Profile endpoint, API key, and model.
-- Supports a saved prompt optimization template.
-- Shows a configuration prompt when no API key is available instead of sending an
-  invalid request.
-- Shows an error message when optimization fails.
+## Optimize Prompt
 
-### Summary / Ask Panel
+- 将原内置优化接口替换为 OpenAI-compatible `chat/completions` 调用。
+- 请求使用当前选择的 API Profile。
+- 支持保存自定义提示词优化模板。
+- 未配置 API key 时，只提示配置，不发起无效请求。
+- 请求失败时显示优化失败提示。
 
-- Adds a centered Summary/Ask panel that can be opened from the header or the
-  shortcut system.
-- Default shortcut support includes `Alt+S` for opening the summary panel.
-- Supports selecting an API Profile and customizing the summary prompt.
-- Collects the active chat context, shows a preview, and renders AI output as
-  readable Markdown.
-- The panel is draggable, width-resizable, scroll-safe, and preserves the resized
-  width in local browser storage.
-- Improves ChatGPT message collection by relying on per-turn copy buttons,
-  keeping copied turns separate, and avoiding unsafe page-text fallback when
-  ChatGPT copy-button content is unavailable.
-- Improves Kagi collection by keeping the parsed user query as the source of
-  truth and only supplementing assistant text when it matches the current turn.
+## Summary / Ask Panel
 
-### Config Import / Export
+- 新增居中的 Summary / Ask 面板。
+- 可从顶部入口或快捷键系统打开。
+- 默认快捷键包含 `Alt+S` 打开 Summary / Ask 面板。
+- 支持选择 API Profile，并支持自定义总结提示词。
+- 会采集当前聊天上下文，先展示预览，再输出 Markdown 格式结果。
+- 面板支持拖动、宽度调整和滚动，宽度会保存到浏览器本地存储。
 
-- Adds settings-menu buttons for exporting and importing configuration.
-- Export includes `options`, `customConfig`, `promptLibrary`, and
-  `shortcutConfig`.
-- Import only writes known keys found in the JSON file.
-- Import remains compatible with older exports that do not include
-  `shortcutConfig`.
+### ChatGPT 采集行为
 
-### Google Analytics Telemetry
+- 将每个 `[data-message-author-role]` 节点视为独立轮次。
+- 优先使用当前轮次自己的 `Copy message` / `Copy response` / `Response copied` / `Copied` 按钮内容。
+- 保持每轮复制结果相互独立。
+- 对复制按钮做短暂重试，并在需要时执行助手消息的轻量恢复。
+- 不再对 ChatGPT 使用页面文本作为不安全兜底。
 
-- Disables the extension's own Google Analytics Measurement Protocol telemetry.
-- Stops sending extension page view, install, log, click, keypress, and error
-  events to GA.
-- Cleans old `clientId` and `sessionData` telemetry identifiers on install.
-- Keeps `manifest.update_url` unchanged because it is the Chrome extension update
-  URL, not Google Analytics telemetry.
-- This change does not modify or block telemetry performed by external chat sites
-  embedded inside the extension.
+### Kagi 采集行为
 
-## Installation
+- 将解析出的用户 query 作为当前轮次的用户输入来源。
+- 仅在助手内容与当前轮次匹配时，才用 native-copy 做补充。
 
-### Install the signed CRX
+## 配置导入 / 导出
 
-1. Open Chrome or another Chromium browser extension page:
-   `chrome://extensions/`
-2. Enable Developer mode.
-3. Drag `dist/Simple-Chat-Hub-2.4.0.14.crx` into the extensions page.
+| 项目 | 行为 |
+| --- | --- |
+| Export Config | 导出当前配置 JSON |
+| Import Config | 从 JSON 恢复已知配置项 |
+| 导出范围 | `options`、`customConfig`、`promptLibrary`、`shortcutConfig` |
+| 兼容性 | 兼容旧版导出文件缺少 `shortcutConfig` 的情况 |
+| 导入成功 | 写入配置后提示成功并刷新页面 |
+| 导入失败 | 显示导入失败提示 |
 
-### Load the unpacked Mod
+## Google Analytics 遥测
 
-1. Open `chrome://extensions/`.
-2. Enable Developer mode.
-3. Choose "Load unpacked".
-4. Select the `Mod/` directory.
+- 屏蔽扩展自身的 Google Analytics Measurement Protocol 遥测。
+- 停止发送 page view、install、log、click、keypress、error 等 GA 事件。
+- 安装时清理旧的 `clientId` 与 `sessionData` 遥测标识。
+- 保留 `manifest.update_url`，因为它是 Chrome 扩展更新地址，不是 GA 遥测地址。
+- 不修改、不屏蔽扩展中嵌入的外部聊天网站自身遥测行为。
 
-## Usage Notes
+## 安装方式
 
-- This Mod targets the Chrome/Chromium MV3 build only.
-- API-powered Optimize Prompt and Summary/Ask require an OpenAI-compatible
-  endpoint, API key, and model configured in API Profiles.
-- Chat platforms that require login must be logged in inside the embedded site
-  before the extension can interact with them reliably.
-- Network access to the selected chat platforms and configured API endpoints is
-  still required.
+### 安装 CRX
+
+1. 打开 Chromium 浏览器扩展管理页：`chrome://extensions/`
+2. 开启“开发者模式”。
+3. 将 `dist/Simple-Chat-Hub-2.4.0.14.crx` 拖入扩展管理页安装。
+
+### 加载解包目录
+
+1. 打开 Chromium 浏览器扩展管理页：`chrome://extensions/`
+2. 开启“开发者模式”。
+3. 点击“加载已解压的扩展程序”。
+4. 选择 `Mod/` 目录。
+
+## 使用注意
+
+- 本 Mod 面向 Chrome / Chromium MV3 构建。
+- Optimize Prompt 与 Summary / Ask 需要配置 OpenAI-compatible endpoint、API key 和 model。
+- 需要登录的平台，请先在嵌入页面中完成登录。
+- 使用内置平台和自定义 API endpoint 时，需要保证网络可访问。
