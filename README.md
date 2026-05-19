@@ -1,38 +1,115 @@
-# Simple Chat Hub 2.4.0 Mod 功能修改
+# Simple Chat Hub 2.4.0 Mod
 
-本分支只记录相对原版 Simple Chat Hub 2.4.0 的功能修改。
+This branch contains a Chrome MV3 Mod build of Simple Chat Hub based on the
+`2.4.0.14` extension payload.
 
-## Optimize Prompt
+Simple Chat Hub aggregates mainstream AI chat platforms into one browser
+extension. It keeps the original multi-platform chat workflow, then adds custom
+API-profile powered prompt optimization, conversation summary/ask tooling,
+configuration backup, and telemetry reduction.
 
-- 设置面板新增 `Optimize Prompt` 管理入口。
-- 新增自定义优化配置：
-  - `URL`
-  - `Key`
-  - `Model`
-  - `Template`
-- 将原内置 `/v1/prompt/optimize` 调用改为 OpenAI-compatible `chat/completions` 调用。
-- 优化请求使用用户配置的 endpoint、API key、model 和 prompt template。
-- 未配置 API Key 时显示配置提示，不发起优化请求。
-- 请求失败时显示优化失败提示。
+## Package Layout
 
-## 配置导入 / 导出
+- `Mod/`: unpacked Chrome MV3 extension payload for developer-mode loading.
+- `Mod/MOD_NOTES.md`: internal Mod notes; this file is documentation only and is
+  not part of the runtime behavior.
+- `dist/Simple-Chat-Hub-2.4.0.14.crx`: signed CRX3 package for installation.
+- `CUSTOM_CONFIG_EXAMPLE.md`: examples for adding custom chat platforms.
 
-- 设置面板底部新增 `Export Config` 按钮。
-- 设置面板底部新增 `Import Config` 按钮。
-- 导出配置包含：
-  - `options`
-  - `customConfig`
-  - `promptLibrary`
-  - `shortcutConfig`
-- 导入配置时只写入 JSON 中存在的已知配置项。
-- 兼容旧版导出文件缺少 `shortcutConfig` 的情况。
-- 导入成功后显示提示并刷新页面。
-- 导入失败时显示错误提示。
+The signed CRX keeps the extension ID stable:
 
-## Google Analytics 遥测
+```text
+jhhdlimojbejlcmknnijakeokoggdhgb
+```
 
-- 屏蔽扩展自身的 Google Analytics Measurement Protocol 遥测。
-- 停止发送 page view、install、log、click、keypress、error 等 GA 事件。
-- 安装时不再生成新的 GA `clientId`。
-- 安装时清理旧的 `clientId` 和 `sessionData` 遥测标识。
-- 保留 `manifest.update_url`，因为它是 Chrome 扩展更新地址，不是 Google Analytics 遥测。
+## Original Features Kept
+
+- Send one prompt to multiple AI chat platforms and compare replies side by side.
+- Use built-in chat platforms such as ChatGPT, Gemini, Grok, Kimi, DouBao, Qwen,
+  and other supported services.
+- Add custom chat platforms through custom config.
+- Arrange chat apps with layout presets, tabs, fullscreen mode, and per-panel
+  actions.
+- Use the prompt library, keyboard shortcuts, theme/language settings, and
+  screenshot tools from the original extension.
+
+## Mod Features
+
+### API Profiles
+
+- Adds reusable API Profiles with custom name, endpoint, API key, and model.
+- Uses API Profiles for both Optimize Prompt and Summary/Ask.
+- Normalizes and migrates older Optimize/Summary settings into the shared profile
+  format when existing settings are loaded.
+
+### Optimize Prompt
+
+- Replaces the built-in optimization request with an OpenAI-compatible
+  `chat/completions` request.
+- Uses the selected API Profile endpoint, API key, and model.
+- Supports a saved prompt optimization template.
+- Shows a configuration prompt when no API key is available instead of sending an
+  invalid request.
+- Shows an error message when optimization fails.
+
+### Summary / Ask Panel
+
+- Adds a centered Summary/Ask panel that can be opened from the header or the
+  shortcut system.
+- Default shortcut support includes `Alt+S` for opening the summary panel.
+- Supports selecting an API Profile and customizing the summary prompt.
+- Collects the active chat context, shows a preview, and renders AI output as
+  readable Markdown.
+- The panel is draggable, width-resizable, scroll-safe, and preserves the resized
+  width in local browser storage.
+- Improves ChatGPT message collection by relying on per-turn copy buttons,
+  keeping copied turns separate, and avoiding unsafe page-text fallback when
+  ChatGPT copy-button content is unavailable.
+- Improves Kagi collection by keeping the parsed user query as the source of
+  truth and only supplementing assistant text when it matches the current turn.
+
+### Config Import / Export
+
+- Adds settings-menu buttons for exporting and importing configuration.
+- Export includes `options`, `customConfig`, `promptLibrary`, and
+  `shortcutConfig`.
+- Import only writes known keys found in the JSON file.
+- Import remains compatible with older exports that do not include
+  `shortcutConfig`.
+
+### Google Analytics Telemetry
+
+- Disables the extension's own Google Analytics Measurement Protocol telemetry.
+- Stops sending extension page view, install, log, click, keypress, and error
+  events to GA.
+- Cleans old `clientId` and `sessionData` telemetry identifiers on install.
+- Keeps `manifest.update_url` unchanged because it is the Chrome extension update
+  URL, not Google Analytics telemetry.
+- This change does not modify or block telemetry performed by external chat sites
+  embedded inside the extension.
+
+## Installation
+
+### Install the signed CRX
+
+1. Open Chrome or another Chromium browser extension page:
+   `chrome://extensions/`
+2. Enable Developer mode.
+3. Drag `dist/Simple-Chat-Hub-2.4.0.14.crx` into the extensions page.
+
+### Load the unpacked Mod
+
+1. Open `chrome://extensions/`.
+2. Enable Developer mode.
+3. Choose "Load unpacked".
+4. Select the `Mod/` directory.
+
+## Usage Notes
+
+- This Mod targets the Chrome/Chromium MV3 build only.
+- API-powered Optimize Prompt and Summary/Ask require an OpenAI-compatible
+  endpoint, API key, and model configured in API Profiles.
+- Chat platforms that require login must be logged in inside the embedded site
+  before the extension can interact with them reliably.
+- Network access to the selected chat platforms and configured API endpoints is
+  still required.
