@@ -1,8 +1,8 @@
 {
-  "extension_name": {
-    "message": "Simple Chat Hub"
-  },
-  "extension_description": {
-    "message": "Uma extensão de navegador que agrega plataformas de chat de IA, permitindo conversas síncronas em múltiplos serviços."
-  }
+   "extension_description": {
+      "message": "Uma extensão de navegador que agrega plataformas de chat de IA, permitindo conversas síncronas em múltiplos serviços."
+   },
+   "extension_name": {
+      "message": "Simple Chat Hub"
+   }
 }
