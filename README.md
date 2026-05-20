@@ -10,7 +10,10 @@
 | --- | --- |
 | `Mod/` | 解包后的扩展目录，可用开发者模式加载 |
 | `Mod/MOD_NOTES.md` | Mod 修改记录，仅作说明 |
-| `dist/Simple-Chat-Hub-2.4.0.14.crx` | 已签名 CRX3 安装包 |
+| `Mod.zip` | 由 `Mod/` 内容生成的签名 payload |
+| `Mod.crx` | 由 `Mod.zip` 和 `../Mod.pem` 签名生成的 CRX3 |
+| `dist/Simple-Chat-Hub-2.4.0「YYYY-MM-DD｜HH:MM:SS」.crx` | 已签名 CRX3 安装包 |
+| `history/` | 打包前从 `dist/` 自动归档的旧 `.crx` |
 | `CUSTOM_CONFIG_EXAMPLE.md` | 自定义平台配置示例 |
 
 扩展 ID：
@@ -59,13 +62,30 @@ jhhdlimojbejlcmknnijakeokoggdhgb
 - 保留 `manifest.update_url`，它是 Chrome 扩展更新地址，不是 GA 遥测。
 - 不处理外部聊天网站自身的遥测行为。
 
+## 打包
+
+官方打包入口：
+
+```bash
+node scripts/package_mod.js --key ../Mod.pem
+node scripts/verify_mod.js .
+```
+
+打包会先将 `dist/` 中已有的 `.crx` 移入 `history/`，再生成 `Mod.zip`、`Mod.crx` 和 `dist/Simple-Chat-Hub-2.4.0「YYYY-MM-DD｜HH:MM:SS」.crx`。如需指定路径：
+
+```bash
+node scripts/package_mod.js --root . --key ../Mod.pem --out-dir dist --history-dir history
+```
+
+打包时会将 `Mod/manifest.json` 的 `version_name` 更新为 `原始版本号 Mod`，例如 `2.4.0 Mod`；同时将各语言的 `extension_description` 更新为 `Mod「YYYY-MM-DD｜HH:MM:SS」`，例如 `Mod「2026-05-20｜12:34:56」`。`version` 保持 Chrome 所需的内部数值版本，例如 `2.4.0.14`。
+
 ## 安装
 
 ### 安装 CRX
 
 1. 打开 `chrome://extensions/`。
 2. 开启“开发者模式”。
-3. 拖入 `dist/Simple-Chat-Hub-2.4.0.14.crx`。
+3. 拖入 `dist/Simple-Chat-Hub-2.4.0「YYYY-MM-DD｜HH:MM:SS」.crx`。
 
 ### 加载解包目录
 

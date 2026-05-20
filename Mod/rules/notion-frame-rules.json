@@ -1,0 +1,104 @@
+[
+  {
+    "id": 901,
+    "priority": 1000,
+    "action": {
+      "type": "modifyHeaders",
+      "responseHeaders": [
+        {
+          "header": "X-Frame-Options",
+          "operation": "remove"
+        },
+        {
+          "header": "Content-Security-Policy",
+          "operation": "remove"
+        },
+        {
+          "header": "Content-Security-Policy-Report-Only",
+          "operation": "remove"
+        }
+      ]
+    },
+    "condition": {
+      "urlFilter": "notion.so"
+    }
+  },
+  {
+    "id": 902,
+    "priority": 1000,
+    "action": {
+      "type": "modifyHeaders",
+      "responseHeaders": [
+        {
+          "header": "X-Frame-Options",
+          "operation": "remove"
+        },
+        {
+          "header": "Content-Security-Policy",
+          "operation": "remove"
+        },
+        {
+          "header": "Content-Security-Policy-Report-Only",
+          "operation": "remove"
+        }
+      ]
+    },
+    "condition": {
+      "urlFilter": "notion.so",
+      "resourceTypes": [
+        "main_frame"
+      ]
+    }
+  },
+  {
+    "id": 903,
+    "priority": 1000,
+    "action": {
+      "type": "modifyHeaders",
+      "responseHeaders": [
+        {
+          "header": "X-Frame-Options",
+          "operation": "remove"
+        },
+        {
+          "header": "Content-Security-Policy",
+          "operation": "remove"
+        },
+        {
+          "header": "Content-Security-Policy-Report-Only",
+          "operation": "remove"
+        }
+      ]
+    },
+    "condition": {
+      "urlFilter": "notion.com"
+    }
+  },
+  {
+    "id": 904,
+    "priority": 1000,
+    "action": {
+      "type": "modifyHeaders",
+      "responseHeaders": [
+        {
+          "header": "X-Frame-Options",
+          "operation": "remove"
+        },
+        {
+          "header": "Content-Security-Policy",
+          "operation": "remove"
+        },
+        {
+          "header": "Content-Security-Policy-Report-Only",
+          "operation": "remove"
+        }
+      ]
+    },
+    "condition": {
+      "urlFilter": "notion.com",
+      "resourceTypes": [
+        "main_frame"
+      ]
+    }
+  }
+]
