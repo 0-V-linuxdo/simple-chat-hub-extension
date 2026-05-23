@@ -6,39 +6,69 @@
       "service_worker": "service-worker-loader.js",
       "type": "module"
    },
-   "content_scripts": [  ],
+   "content_scripts": [],
    "declarative_net_request": {
-      "rule_resources": [ {
-         "enabled": true,
-         "id": "notion_frame_rules",
-         "path": "rules/notion-frame-rules.json"
-      } ]
+      "rule_resources": [
+         {
+            "enabled": true,
+            "id": "notion_frame_rules",
+            "path": "rules/notion-frame-rules.json"
+         }
+      ]
    },
    "default_locale": "en",
    "description": "__MSG_extension_description__",
    "homepage_url": "https://chathub.aipilot.cc/",
-   "host_permissions": [ "\u003Call_urls>" ],
+   "host_permissions": [
+      "<all_urls>"
+   ],
    "icons": {
-      "128": "img/logo-128.png",
       "16": "img/logo-16.png",
       "32": "img/logo-34.png",
-      "48": "img/logo-48.png"
+      "48": "img/logo-48.png",
+      "128": "img/logo-128.png"
    },
    "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1wLyMGT5Ra2uFN5aOwk6rKQxuzomh0cnHSpPRwwgfE2XF/J0On5SoW5upqgGiE0TngKC6wcCXK3DVUjVjv4lSxMnueaul3bBGuHVPr1usiEktPT2QTxcxoPEe3+AXP1VTGHcSZekFaEkmcQunOgKa1ivhkggZbiSkNyyP9rHZgce2A1KOWsrzPOSFY1hKvR/P2Gprwla6hNFsRYKDc6Zf2q92f2kRbxEvAjeXAhwNtUMmcXqBMxf4IYLmPsiWkaG9QtiR/C6vPj6LA/9dzBXreFS8g2qJ7mCOUFDTsIoSjMzaZIU00A08Hfvv5kyisMSohOLf9bgP780UF3nXwOYnwIDAQAB",
    "manifest_version": 3,
    "name": "__MSG_extension_name__",
    "options_page": "chatHub.html",
-   "permissions": [ "storage", "declarativeNetRequest", "scripting" ],
+   "permissions": [
+      "storage",
+      "declarativeNetRequest",
+      "scripting",
+      "clipboardRead",
+      "clipboardWrite"
+   ],
    "update_url": "https://clients2.google.com/service/update2/crx",
    "version": "2.4.0.14",
    "version_name": "2.4.0 Mod",
-   "web_accessible_resources": [ {
-      "matches": [  ],
-      "resources": [ "img/logo-16.png", "img/logo-34.png", "img/logo-48.png", "img/logo-128.png" ],
-      "use_dynamic_url": false
-   }, {
-      "matches": [ "http://*/*", "https://*/*" ],
-      "resources": [ "assets/chunk-06acad6c.js", "assets/chunk-18c69788.js", "assets/chunk-1f8f82b9.js", "assets/chunk-9af4a4ac.js", "assets/chunk-cf010ec4.js", "assets/chunk-9a2e4b03.js", "assets/chunk-299a0bd1.js", "assets/chunk-a682ba63.js" ],
-      "use_dynamic_url": false
-   } ]
+   "web_accessible_resources": [
+      {
+         "matches": [],
+         "resources": [
+            "img/logo-16.png",
+            "img/logo-34.png",
+            "img/logo-48.png",
+            "img/logo-128.png"
+         ],
+         "use_dynamic_url": false
+      },
+      {
+         "matches": [
+            "http://*/*",
+            "https://*/*"
+         ],
+         "resources": [
+            "assets/chunk-06acad6c.js",
+            "assets/chunk-18c69788.js",
+            "assets/chunk-1f8f82b9.js",
+            "assets/chunk-9af4a4ac.js",
+            "assets/chunk-cf010ec4.js",
+            "assets/chunk-9a2e4b03.js",
+            "assets/chunk-299a0bd1.js",
+            "assets/chunk-a682ba63.js"
+         ],
+         "use_dynamic_url": false
+      }
+   ]
 }
