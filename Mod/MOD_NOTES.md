@@ -57,6 +57,7 @@ This branch adds a Chrome Mod build based on the Simple Chat Hub 2.4.0 CRX paylo
 - Expanded the Claude Summary seed to also match `/new`, so empty Claude start pages are protected and skipped instead of contributing page chrome text; Summary site config is now v34.
 - Added a Summary Panel collection guard for blank `claude.ai/new` pages and clear stale Preview cards on collection failure, so empty Claude pages cannot leave page-text remnants in the preview.
 - Updated the Notion AI default Summary userscript config to match `app.notion.com` while keeping the existing `notion.so` compatibility; Notion is structured-only and Summary site config is now v62.
+- Registered Notion AI content scripts for `app.notion.com/*`, `www.notion.so/*`, and `notion.so/*` in addition to the configured app URL, fixing Summary collection timeouts after Notion redirects old `/ai` entries to `app.notion.com/chat`.
 - Legacy selector-style Summary configs are converted into a userscript draft during normalization, while built-in rows can be reset to the current userscript defaults.
 - Added a Summary Preview hard timeout per iframe and skipped `chrome-error://` browser error pages so broken embedded pages cannot keep collection stuck or contribute browser error text.
 - Upgraded Summary settings from a compact form into a wider management page with API Profile selection, prompt reset, a larger prompt editor, and a Summary Site Configs table modeled after Custom Config.
