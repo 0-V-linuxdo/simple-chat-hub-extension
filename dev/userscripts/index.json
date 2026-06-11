@@ -1,5 +1,5 @@
 {
-  "summarySiteConfigVersion": 60,
+  "summarySiteConfigVersion": 62,
   "extractedAt": "2026-05-23T16:05:39.670Z",
   "source": "Mod/assets/chunk-7dbf4e81.js",
   "configs": [
@@ -175,8 +175,9 @@
       "name": "Notion",
       "enabled": true,
       "builtIn": true,
-      "configVersion": 35,
+      "configVersion": 62,
       "hosts": [
+        "app.notion.com",
         "notion.so",
         "www.notion.so",
         "*.notion.so"

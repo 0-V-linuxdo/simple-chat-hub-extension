@@ -56,7 +56,7 @@ This branch adds a Chrome Mod build based on the Simple Chat Hub 2.4.0 CRX paylo
 - Added a Claude default Summary userscript validated in Dia DevTools against current `You said:` / `Claude responded:` headings and message Copy buttons; Claude is structured-only and Summary site config is now v33.
 - Expanded the Claude Summary seed to also match `/new`, so empty Claude start pages are protected and skipped instead of contributing page chrome text; Summary site config is now v34.
 - Added a Summary Panel collection guard for blank `claude.ai/new` pages and clear stale Preview cards on collection failure, so empty Claude pages cannot leave page-text remnants in the preview.
-- Added a Notion AI default Summary userscript validated in Dia DevTools against current `Copy text` / `Copy response` buttons on `notion.so/chat`; Notion is structured-only and Summary site config is now v35.
+- Updated the Notion AI default Summary userscript config to match `app.notion.com` while keeping the existing `notion.so` compatibility; Notion is structured-only and Summary site config is now v62.
 - Legacy selector-style Summary configs are converted into a userscript draft during normalization, while built-in rows can be reset to the current userscript defaults.
 - Added a Summary Preview hard timeout per iframe and skipped `chrome-error://` browser error pages so broken embedded pages cannot keep collection stuck or contribute browser error text.
 - Upgraded Summary settings from a compact form into a wider management page with API Profile selection, prompt reset, a larger prompt editor, and a Summary Site Configs table modeled after Custom Config.
@@ -66,7 +66,7 @@ This branch adds a Chrome Mod build based on the Simple Chat Hub 2.4.0 CRX paylo
 - Replaced hard-coded Summary protected-site dispatch with unified `summarySiteConfigs` rules: built-in and custom Summary sites now use the same URL matching, role mapping, and Copy-button extraction configuration, with `structuredOnly` or `allowPageText` fallback behavior per site.
 - Upgraded Optimize settings into the same wider management page pattern with API Profile selection, API Profiles shortcut, prompt reset, larger prompt editor, and a visible optimization-flow note.
 - Added settings import and export buttons for `options`, `customConfig`, `promptLibrary`, and `shortcutConfig`.
-- Added Notion AI as a built-in chat app entry for `https://www.notion.so/ai`.
+- Updated Notion AI as a built-in chat app entry to `https://app.notion.com/ai`.
 - Added a Claude-only iframe compatibility patch that masks extension `ancestorOrigins` where configurable and restores hidden Claude sidebar/history candidates inside Simple Chat Hub frames.
 - Broadened the Claude sidebar patch activation for Dia guest-frame cases where `location.ancestorOrigins` is empty, while still skipping top-level Claude tabs.
 - Removed the temporary Claude desktop-width iframe viewport override after Dia testing showed it did not restore Claude's native sidebar and caused unwanted layout side effects.
