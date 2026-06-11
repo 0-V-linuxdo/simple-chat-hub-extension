@@ -19,6 +19,7 @@ This branch adds a Chrome Mod build based on the Simple Chat Hub 2.4.0 CRX paylo
 - Summary/Ask panel position now persists locally and is restored when the panel is reopened, while still clamping to the current viewport.
 - Summary/Ask panel position persistence is now owned by the panel state and synchronized after edge resizing, so reopen and rerender keep the current location.
 - Summary/Ask panel geometry is now owned by a single React state, replacing the external DOM resize manager for position, width, height, and edge handles.
+- Added a Summary/Ask panel maximize/restore control and made edge resizing track the pointer smoothly across iframe boundaries.
 - Summary collection no longer dispatches to site-specific extraction functions; seeded configurations for ChatGPT, Gemini/Bard, Kagi Assistant, DeepSeek, and Grok now all use the same plugin-connected Summary userscript format.
 - Summary collection now treats configured chat pages as protected by default: ChatGPT, Gemini/Bard, Kagi Assistant, DeepSeek, and Grok seed entries are skipped when configured Copy-button extraction fails, so sidebar/history/page chrome text is not used unless that site's fallback is explicitly set to page text.
 - Replaced selector-form Summary extraction rules with versioned userscript configs. Each userscript now runs through the plugin-injected page-world runtime inside the target iframe, with `api` helpers for DOM queries, real Copy-button clicking/capture, turn extraction, copy-sequence extraction, normalization, sleeping, and merging.
@@ -59,6 +60,9 @@ This branch adds a Chrome Mod build based on the Simple Chat Hub 2.4.0 CRX paylo
 - Legacy selector-style Summary configs are converted into a userscript draft during normalization, while built-in rows can be reset to the current userscript defaults.
 - Added a Summary Preview hard timeout per iframe and skipped `chrome-error://` browser error pages so broken embedded pages cannot keep collection stuck or contribute browser error text.
 - Upgraded Summary settings from a compact form into a wider management page with API Profile selection, prompt reset, a larger prompt editor, and a Summary Site Configs table modeled after Custom Config.
+- Fixed Summary settings list reordering by preserving hidden form-field watches for Summary site configs and prompt templates, so drag-and-drop updates no longer snap back to the default order.
+- Corrected the built-in Summary script default order to ChatGPT, Claude, Gemini, DeepSeek, Grok, Grok Mirror, Kagi Assistant, ChatHub, Notion, LobeHub, and TypingMind, with a narrow migration for untouched old-default ordering.
+- Hardened Optimize Prompt Template and API Profile hidden form-field watches with preserved values, preventing similar drag-and-drop or selector state from snapping back after form normalization.
 - Replaced hard-coded Summary protected-site dispatch with unified `summarySiteConfigs` rules: built-in and custom Summary sites now use the same URL matching, role mapping, and Copy-button extraction configuration, with `structuredOnly` or `allowPageText` fallback behavior per site.
 - Upgraded Optimize settings into the same wider management page pattern with API Profile selection, API Profiles shortcut, prompt reset, larger prompt editor, and a visible optimization-flow note.
 - Added settings import and export buttons for `options`, `customConfig`, `promptLibrary`, and `shortcutConfig`.
@@ -86,6 +90,8 @@ This branch adds a Chrome Mod build based on the Simple Chat Hub 2.4.0 CRX paylo
 
 ## Summary DeepSeek/Grok Copy Extraction Notes
 
+- 2026-05-26: Fixed DeepSeek Summary Copy candidate scoring after a live console probe confirmed the visible Copy controls return valid user and assistant clipboard payloads. The bug was that message/action scope containers were also being scored as Copy candidates when they merely contained a Copy SVG, so only real button-like elements are now admitted.
+- 2026-05-25: Updated DeepSeek Summary extraction for the current visible action-bar layout. The DeepSeek script now treats visible small icon buttons as valid user/assistant Copy candidates, recognizes Ant-style overlapping-square Copy SVGs, scopes button search to the full message/action row, and skips DeepSeek hover preparation because the current Copy controls are already visible.
 - 2026-05-23: The DeepSeek/Grok Preview regression looked like a clipboard-transfer failure because the page showed native Copy activity while Preview still returned `No userscript messages found`, but the root cause was the userscript extraction shape.
 - Working site scripts such as ChatGPT, Gemini/Bard, Claude, Kagi Assistant, and LobeHub own the whole extraction path: find each user/assistant turn, score native Copy controls near that turn, call `api.copy(button)`, and build messages only from the copied payload.
 - The broken DeepSeek/Grok scripts delegated to `api.extractDeepSeekNativeCopyMessages`, `api.extractGrokNativeCopyMessages`, and then generic `api.extractCopySequence`. In the page-world bridge those DeepSeek/Grok helpers were only aliases for generic native-copy extraction, so `pageWorldFirst` never ran site-specific turn/button logic.

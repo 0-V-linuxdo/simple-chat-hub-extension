@@ -1,8 +1,8 @@
 // Built-in Summary userscript: Kagi Assistant (kagi)
 // Source: Mod/assets/chunk-7dbf4e81.js :: SUMMARY_SITE_CONFIG_DEFAULTS
-// Config version: 60; global config version: 60
-// Hosts: kagi.com, *.kagi.com
-// Path prefixes: /assistant
+// Config version: 61; global config version: 61
+// Hosts: assistant.kagi.com
+// Path prefixes: (none)
 // Run mode: serial; timeout: 32000
 // This is a Simple Chat Hub Summary bridge body, not a standalone browser userscript.
 

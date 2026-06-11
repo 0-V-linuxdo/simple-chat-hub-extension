@@ -4,22 +4,6 @@
   "source": "Mod/assets/chunk-7dbf4e81.js",
   "configs": [
     {
-      "id": "chathub",
-      "name": "ChatHub",
-      "enabled": true,
-      "builtIn": true,
-      "configVersion": 47,
-      "hosts": [
-        "app.chathub.gg"
-      ],
-      "pathPrefixes": [
-        "/chat"
-      ],
-      "fallbackMode": "structuredOnly",
-      "userscriptFile": "chathub.js",
-      "userscriptLength": 1387
-    },
-    {
       "id": "chatgpt",
       "name": "ChatGPT",
       "enabled": true,
@@ -44,6 +28,24 @@
       "userscriptLength": 3193
     },
     {
+      "id": "claude",
+      "name": "Claude",
+      "enabled": true,
+      "builtIn": true,
+      "configVersion": 34,
+      "hosts": [
+        "claude.ai",
+        "*.claude.ai"
+      ],
+      "pathPrefixes": [
+        "/chat",
+        "/new"
+      ],
+      "fallbackMode": "structuredOnly",
+      "userscriptFile": "claude.js",
+      "userscriptLength": 4211
+    },
+    {
       "id": "gemini",
       "name": "Gemini",
       "enabled": true,
@@ -66,36 +68,11 @@
       "userscriptLength": 9017
     },
     {
-      "id": "kagi",
-      "name": "Kagi Assistant",
-      "enabled": true,
-      "builtIn": true,
-      "configVersion": 60,
-      "hosts": [
-        "kagi.com",
-        "*.kagi.com"
-      ],
-      "pathPrefixes": [
-        "/assistant"
-      ],
-      "fallbackMode": "structuredOnly",
-      "userscriptRunMode": "serial",
-      "userscriptTimeoutMs": 32000,
-      "domTextFallback": false,
-      "domTextFallbackRoles": [],
-      "messageTextSelector": "",
-      "userTextSelector": "",
-      "assistantTextSelector": "",
-      "copyTimeoutMs": 3600,
-      "userscriptFile": "kagi.js",
-      "userscriptLength": 1299
-    },
-    {
       "id": "deepseek",
       "name": "DeepSeek",
       "enabled": true,
       "builtIn": true,
-      "configVersion": 58,
+      "configVersion": 60,
       "hosts": [
         "deepseek.com",
         "*.deepseek.com"
@@ -112,7 +89,7 @@
       "copyTimeoutMs": 3600,
       "userscriptFallbackDelayMs": 1000,
       "userscriptFile": "deepseek.js",
-      "userscriptLength": 21527
+      "userscriptLength": 23180
     },
     {
       "id": "grok",
@@ -156,22 +133,42 @@
       "userscriptLength": 3977
     },
     {
-      "id": "claude",
-      "name": "Claude",
+      "id": "kagi",
+      "name": "Kagi Assistant",
       "enabled": true,
       "builtIn": true,
-      "configVersion": 34,
+      "configVersion": 61,
       "hosts": [
-        "claude.ai",
-        "*.claude.ai"
+        "assistant.kagi.com"
+      ],
+      "pathPrefixes": [],
+      "fallbackMode": "structuredOnly",
+      "userscriptRunMode": "serial",
+      "userscriptTimeoutMs": 32000,
+      "domTextFallback": false,
+      "domTextFallbackRoles": [],
+      "messageTextSelector": "",
+      "userTextSelector": "",
+      "assistantTextSelector": "",
+      "copyTimeoutMs": 3600,
+      "userscriptFile": "kagi.js",
+      "userscriptLength": 1299
+    },
+    {
+      "id": "chathub",
+      "name": "ChatHub",
+      "enabled": true,
+      "builtIn": true,
+      "configVersion": 47,
+      "hosts": [
+        "app.chathub.gg"
       ],
       "pathPrefixes": [
-        "/chat",
-        "/new"
+        "/chat"
       ],
       "fallbackMode": "structuredOnly",
-      "userscriptFile": "claude.js",
-      "userscriptLength": 4211
+      "userscriptFile": "chathub.js",
+      "userscriptLength": 1387
     },
     {
       "id": "notion",

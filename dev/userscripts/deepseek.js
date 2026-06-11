@@ -1,6 +1,6 @@
 // Built-in Summary userscript: DeepSeek (deepseek)
 // Source: Mod/assets/chunk-7dbf4e81.js :: SUMMARY_SITE_CONFIG_DEFAULTS
-// Config version: 58; global config version: 60
+// Config version: 60; global config version: 60
 // Hosts: deepseek.com, *.deepseek.com
 // Path prefixes: (none)
 // Run mode: pageWorldFirst; timeout: 36000
@@ -94,6 +94,7 @@ const looksCopyIcon = button => {
   const text = svgSignature(button);
   if (!text) return false;
   if (/copy|clipboard|content_copy|copy_all|file_copy|lucide-copy|tabler-icon-copy|copy[-_ ]?(?:icon|line|fill)|heroicons.*clipboard|mingcute.*copy|carbon.*copy/.test(text)) return true;
+  if (/64 64 896 896/.test(text) && /m832\s*64h296|m704\s*192h-?512|v688|v704|h512|h496/.test(text) && /v624|h432|h496/.test(text)) return true;
   if (/0 0 (16|18|20) (16|18|20)/.test(text) && /(m12\.668\s*10\.667c|m12\.66810\.667c|m13\.998\s*12\.665c|m13\.99812\.665c|m6\.14929\s*4\.02032c|m6\.149294\.02032c|m9\.80164\s*0\.367975c|m9\.801640\.367975c)/.test(text)) return true;
   if (/0 0 24 24/.test(text) && (/\bm\s*(4|6|7|8|9)\s*(4|6|7|8|9)\b/.test(text) || /\bx\s*=\s*(4|6|7|8|9)\b/.test(text)) && (/\bh\s*(8|9|10|12|14)\b|\bv\s*(8|9|10|12|14)\b|width=(8|9|10|12|14)|height=(8|9|10|12|14)/.test(text))) return true;
   const rects = qsa('rect', button).filter(rect => Number(rect.getAttribute('width') || 0) >= 7 && Number(rect.getAttribute('height') || 0) >= 7);
@@ -115,7 +116,7 @@ const hoverCopyVisible = button => {
   } catch (error) { return false; }
 };
 const badButton = (button, role = '') => {
-  if (!button || !(role === 'user' ? hoverCopyVisible(button) : visible(button))) return true;
+  if (!button || !visible(button)) return true;
   if (closest(button, 'nav,header,footer,aside,form,input,textarea,select,[contenteditable=true],pre,code,table,kbd,samp,[data-language]')) return true;
   const label = meta(button).toLowerCase();
   const blockedAction = /(?:link|share|history|source|sources|citation|feedback|thumb|like|dislike|settings|export|docs|menu|more|notification|sidebar|regenerate|retry|upload|voice|submit|send|model|attach|new chat|home page|fullscreen|reload|close|edit|delete|search|deepthink|imagine|project|pfp|profile|upgrade)|链接|分享|历史|来源|引用|赞|踩|设置|导出|更多|菜单|通知|侧边栏|重新生成|上传|语音|提交|发送|编辑|删除|搜索/.test(label);
@@ -162,6 +163,17 @@ const roughMatch = (copied, expected) => {
   return parts.filter(part => a.includes(part)).length >= (b.length > 180 ? 2 : 1);
 };
 const addUnique = (list, item) => { if (item && item.nodeType === 1 && !list.includes(item)) list.push(item); };
+const buttonSelector = 'button,[role=button],[role=menuitem],[role=menuitemcheckbox],[role=menuitemradio],div[tabindex],span[role=button]';
+const hasVisibleAction = node => qsa(buttonSelector, node).some(visible);
+const deepSeekActionScope = node => {
+  if (!node || site !== 'deepseek') return node;
+  const direct = closest(node, '.ds-message,[class*=ds-message],[data-message-author-role],article,[data-testid*=message],[class*=message],[class*=Message]') || node;
+  for (let current = direct, depth = 0; current && current !== root && current !== document.body && depth < 8; current = current.parentElement, depth += 1) {
+    if (closest(current, 'nav,header,footer,aside,form,input,textarea,select,[contenteditable=true]')) continue;
+    if (looksMessageText(textOf(current)) && hasVisibleAction(current)) return current;
+  }
+  return direct;
+};
 const actionScopes = anchor => {
   const scopes = [];
   const add = node => {
@@ -186,15 +198,15 @@ const actionScopes = anchor => {
 };
 const candidateButtons = (anchor, role = '') => {
   const anchorRect = rectOf(anchor);
-  const selector = 'button,[role=button],[role=menuitem],[role=menuitemcheckbox],[role=menuitemradio],div[tabindex],span[role=button]';
   const items = [];
   const seen = new Set();
   const add = (button, baseScore) => {
     if (!button || seen.has(button) || badButton(button, role)) return;
+    if (!button.matches || !button.matches(buttonSelector)) return;
     const rect = rectOf(button);
     if (!rect && role !== 'user') return;
     const copyish = explicitCopy(button) || looksCopyIcon(button);
-    const allowSmallIcon = role !== 'user';
+    const allowSmallIcon = site === 'deepseek' ? !!rect : role !== 'user';
     const smallIcon = allowSmallIcon && isSmallIconButton(button);
     if (!copyish && !smallIcon) return;
     let score = baseScore + (copyish ? 0 : 45000);
@@ -213,10 +225,11 @@ const candidateButtons = (anchor, role = '') => {
   };
   let index = 0;
   for (const scope of actionScopes(anchor)) {
-    for (const button of [scope, ...qsa(selector, scope)]) add(button, index++);
+    if (scope.matches && scope.matches(buttonSelector)) add(scope, index++);
+    for (const button of qsa(buttonSelector, scope)) add(button, index++);
   }
   if (anchorRect) {
-    for (const button of qsa(selector, document)) add(button, 90000 + index++);
+    for (const button of qsa(buttonSelector, document)) add(button, 90000 + index++);
   }
   return items.sort((a, b) => a.score - b.score || order(a.button, b.button)).map(item => item.button);
 };
@@ -251,21 +264,37 @@ const hoverTurn = async anchor => {
   await api.sleep(120);
 };
 const copyTurn = async turn => {
-  const anchor = turn.node;
-  await hoverTurn(anchor);
-  let buttons = candidateButtons(anchor, turn.role).slice(0, turn.role === 'user' ? 12 : 10);
-  if (turn.role === 'user' && !buttons.length) {
+  const anchor = turn.actionNode || turn.node;
+  try {
+    api.reveal(turn.node);
+    api.reveal(anchor);
+  } catch (error) {}
+  if (site === 'deepseek') await api.sleep(80);
+  else await hoverTurn(anchor);
+  const buttonLimit = site === 'deepseek' ? (turn.role === 'user' ? 6 : 8) : (turn.role === 'user' ? 12 : 10);
+  let buttons = candidateButtons(anchor, turn.role).slice(0, buttonLimit);
+  if (turn.role === 'user' && !buttons.length && site !== 'deepseek') {
     await hoverTurn(anchor);
     buttons = candidateButtons(anchor, turn.role).slice(0, 12);
   }
-  const maxAttempts = turn.role === 'user' ? 1 : 2;
-  const perRoleCopyOptions = turn.role === 'user'
+  const maxAttempts = site === 'deepseek' ? 1 : (turn.role === 'user' ? 1 : 2);
+  const perRoleCopyOptions = site === 'deepseek'
+    ? { ...copyOptions, copyTimeoutMs: turn.role === 'user' ? 1000 : 1800, copyCaptureGraceMs: 220 }
+    : turn.role === 'user'
     ? { ...copyOptions, copyTimeoutMs: 1200, copyCaptureGraceMs: 180 }
     : { ...copyOptions, copyTimeoutMs: 3200, copyCaptureGraceMs: 260 };
   for (const button of buttons) {
     for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
       if (attempt) await api.sleep(120);
-      try { api.reveal(anchor); hoverElement(anchor); hoverElement(button); api.reveal(button); } catch (error) {}
+      try {
+        api.reveal(turn.node);
+        api.reveal(anchor);
+        if (site !== 'deepseek') {
+          hoverElement(anchor);
+          hoverElement(button);
+        }
+        api.reveal(button);
+      } catch (error) {}
       const raw = await api.copy(button, perRoleCopyOptions);
       const text = useful(raw, turn.role);
       if (text) {
@@ -289,12 +318,12 @@ const looksMessageText = value => {
   if (/Summary Panel|Simple Chat Hub|pages checked/i.test(text)) return false;
   return /[A-Za-z0-9\u4e00-\u9fff]/.test(text);
 };
-const pushTurn = (turns, role, node, expected = '') => {
+const pushTurn = (turns, role, node, expected = '', actionNode = node) => {
   if ((role !== 'user' && role !== 'assistant') || !node) return;
   const text = normalize(expected || textOf(node));
   if (!looksMessageText(text)) return;
   if (turns.some(item => item.role === role && item.node === node)) return;
-  turns.push({ role, node, expected: text });
+  turns.push({ role, node, actionNode: actionNode || node, expected: text });
 };
 const previousTextBlock = (anchor, marker) => {
   const markerRect = rectOf(marker || anchor);
@@ -331,8 +360,8 @@ const findDeepSeekTurns = () => {
       const found = previousTextBlock(assistantScope, assistantScope);
       userNode = found && found.node;
     }
-    if (userNode) pushTurn(turns, 'user', userNode);
-    pushTurn(turns, 'assistant', assistantScope, textOf(assistant));
+    if (userNode) pushTurn(turns, 'user', userNode, '', deepSeekActionScope(userNode));
+    pushTurn(turns, 'assistant', assistantScope, textOf(assistant), deepSeekActionScope(assistantScope));
   }
   return turns;
 };
