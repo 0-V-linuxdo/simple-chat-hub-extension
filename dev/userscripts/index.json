@@ -1,5 +1,5 @@
 {
-  "summarySiteConfigVersion": 62,
+  "summarySiteConfigVersion": 64,
   "extractedAt": "2026-05-23T16:05:39.670Z",
   "source": "Mod/assets/chunk-7dbf4e81.js",
   "configs": [
@@ -122,15 +122,24 @@
       "name": "Grok Mirror",
       "enabled": true,
       "builtIn": true,
-      "configVersion": 36,
+      "configVersion": 64,
       "hosts": [
-        "grok.dairoot.cn",
-        "*.grok.dairoot.cn"
+        "gk.dairoot.cn",
+        "*.gk.dairoot.cn"
       ],
       "pathPrefixes": [],
       "fallbackMode": "structuredOnly",
       "userscriptFile": "grok-dairoot.js",
-      "userscriptLength": 3977
+      "userscriptLength": 21523,
+      "userscriptRunMode": "pageWorldFirst",
+      "userscriptTimeoutMs": 36000,
+      "domTextFallback": false,
+      "domTextFallbackRoles": [],
+      "messageTextSelector": "",
+      "userTextSelector": "",
+      "assistantTextSelector": "",
+      "copyTimeoutMs": 3600,
+      "userscriptFallbackDelayMs": 1000
     },
     {
       "id": "kagi",
