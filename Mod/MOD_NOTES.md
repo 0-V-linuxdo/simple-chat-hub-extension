@@ -63,6 +63,9 @@ This branch adds a Chrome Mod build based on the Simple Chat Hub 2.4.0 CRX paylo
 - Registered Notion AI content scripts for `app.notion.com/*`, `www.notion.so/*`, and `notion.so/*` in addition to the configured app URL, fixing Summary collection timeouts after Notion redirects old `/ai` entries to `app.notion.com/chat`.
 - Fixed Notion AI input and send handling: contenteditable prompts now use verified `insertText` insertion instead of synthetic paste, and the sender probes Notion's current `Submit AI message` role button before using the geometry/Enter fallbacks.
 - Added a Summary Panel blank-page guard for Notion AI `/ai`, so an unstarted Notion chat is skipped instead of reported as a failed extraction while existing `/chat?t=...` conversations still use structured extraction.
+- Updated Notion AI `/ai?t=new...` handling so plugin metadata treats it as `/ai` without navigation, and verified Notion submission now prioritizes the composer Enter key sequence before falling back to local submit-button activation.
+- Added a Notion AI main-world submit bridge so `/ai` composer submission runs in the page context, matching the DevTools Enter path and avoiding isolated-world iframe event failures.
+- Relaxed Notion AI input/submission verification to compare compacted text markers, preventing false failures when Notion collapses multiline prompts into a single visual line.
 - Migrated the dairoot Grok mirror to `gk.dairoot.cn` for both existing custom Chat App URLs and the built-in `Grok Mirror` Summary config; Summary site config is now v63.
 - Updated the `gk.dairoot.cn` Grok Mirror Summary userscript to reuse the current Grok hover/icon Copy-button extractor with page-world-first execution and a longer timeout, fixing empty Preview results on mirror conversations; Summary site config is now v64.
 - Fixed an extra brace in the bundled `Grok Mirror` Summary config so the main chat hub module parses correctly instead of white-screening on load.

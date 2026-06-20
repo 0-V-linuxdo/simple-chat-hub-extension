@@ -64,10 +64,11 @@
             "assets/chunk-1f8f82b9.js",
             "assets/chunk-9af4a4ac.js",
             "assets/chunk-cf010ec4.js",
-            "assets/chunk-9a2e4b03.js",
-            "assets/chunk-299a0bd1.js",
-            "assets/chunk-a682ba63.js"
-         ],
+        "assets/chunk-9a2e4b03.js",
+        "assets/chunk-299a0bd1.js",
+        "assets/chunk-a682ba63.js",
+        "assets/notion-main-bridge.js"
+      ],
          "use_dynamic_url": false
       }
    ]
