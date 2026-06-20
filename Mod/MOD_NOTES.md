@@ -58,6 +58,7 @@ This branch adds a Chrome Mod build based on the Simple Chat Hub 2.4.0 CRX paylo
 - Added a Summary Panel collection guard for blank `claude.ai/new` pages and clear stale Preview cards on collection failure, so empty Claude pages cannot leave page-text remnants in the preview.
 - Updated the Notion AI default Summary userscript config to match `app.notion.com` while keeping the existing `notion.so` compatibility; Notion is structured-only and Summary site config is now v62.
 - Registered Notion AI content scripts for `app.notion.com/*`, `www.notion.so/*`, and `notion.so/*` in addition to the configured app URL, fixing Summary collection timeouts after Notion redirects old `/ai` entries to `app.notion.com/chat`.
+- Fixed Notion AI input and send handling: contenteditable prompts now use verified `insertText` insertion instead of synthetic paste, and the sender probes Notion's current `Submit AI message` role button before using the geometry/Enter fallbacks.
 - Migrated the dairoot Grok mirror to `gk.dairoot.cn` for both existing custom Chat App URLs and the built-in `Grok Mirror` Summary config; Summary site config is now v63.
 - Updated the `gk.dairoot.cn` Grok Mirror Summary userscript to reuse the current Grok hover/icon Copy-button extractor with page-world-first execution and a longer timeout, fixing empty Preview results on mirror conversations; Summary site config is now v64.
 - Fixed an extra brace in the bundled `Grok Mirror` Summary config so the main chat hub module parses correctly instead of white-screening on load.
