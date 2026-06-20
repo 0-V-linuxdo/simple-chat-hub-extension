@@ -20,6 +20,9 @@ This branch adds a Chrome Mod build based on the Simple Chat Hub 2.4.0 CRX paylo
 - Summary/Ask panel position persistence is now owned by the panel state and synchronized after edge resizing, so reopen and rerender keep the current location.
 - Summary/Ask panel geometry is now owned by a single React state, replacing the external DOM resize manager for position, width, height, and edge handles.
 - Added a Summary/Ask panel maximize/restore control and made edge resizing track the pointer smoothly across iframe boundaries.
+- Polished Summary/Ask panel status states with centered status cards, loading indicators, and step progress for Preview collection and Summary generation.
+- Removed the Summary/Ask status card's top icon component so status cards start directly with text.
+- Disabled text selection on Summary Preview card title rows while leaving URLs and message bodies selectable.
 - Summary collection no longer dispatches to site-specific extraction functions; seeded configurations for ChatGPT, Gemini/Bard, Kagi Assistant, DeepSeek, and Grok now all use the same plugin-connected Summary userscript format.
 - Summary collection now treats configured chat pages as protected by default: ChatGPT, Gemini/Bard, Kagi Assistant, DeepSeek, and Grok seed entries are skipped when configured Copy-button extraction fails, so sidebar/history/page chrome text is not used unless that site's fallback is explicitly set to page text.
 - Replaced selector-form Summary extraction rules with versioned userscript configs. Each userscript now runs through the plugin-injected page-world runtime inside the target iframe, with `api` helpers for DOM queries, real Copy-button clicking/capture, turn extraction, copy-sequence extraction, normalization, sleeping, and merging.
@@ -59,6 +62,7 @@ This branch adds a Chrome Mod build based on the Simple Chat Hub 2.4.0 CRX paylo
 - Updated the Notion AI default Summary userscript config to match `app.notion.com` while keeping the existing `notion.so` compatibility; Notion is structured-only and Summary site config is now v62.
 - Registered Notion AI content scripts for `app.notion.com/*`, `www.notion.so/*`, and `notion.so/*` in addition to the configured app URL, fixing Summary collection timeouts after Notion redirects old `/ai` entries to `app.notion.com/chat`.
 - Fixed Notion AI input and send handling: contenteditable prompts now use verified `insertText` insertion instead of synthetic paste, and the sender probes Notion's current `Submit AI message` role button before using the geometry/Enter fallbacks.
+- Added a Summary Panel blank-page guard for Notion AI `/ai`, so an unstarted Notion chat is skipped instead of reported as a failed extraction while existing `/chat?t=...` conversations still use structured extraction.
 - Migrated the dairoot Grok mirror to `gk.dairoot.cn` for both existing custom Chat App URLs and the built-in `Grok Mirror` Summary config; Summary site config is now v63.
 - Updated the `gk.dairoot.cn` Grok Mirror Summary userscript to reuse the current Grok hover/icon Copy-button extractor with page-world-first execution and a longer timeout, fixing empty Preview results on mirror conversations; Summary site config is now v64.
 - Fixed an extra brace in the bundled `Grok Mirror` Summary config so the main chat hub module parses correctly instead of white-screening on load.
