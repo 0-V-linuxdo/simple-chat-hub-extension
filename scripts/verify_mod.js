@@ -168,6 +168,14 @@ function main() {
     assert(!assetsText.includes(forbidden), `forbidden GA marker remains: ${forbidden}`);
   }
 
+  for (const forbidden of [
+    "app.chathub.gg",
+    "\"id\":\"chathub\"",
+    "\"id\": \"chathub\""
+  ]) {
+    assert(!assetsText.includes(forbidden), `removed ChatHub Summary adapter marker remains: ${forbidden}`);
+  }
+
   for (const required of [
     "optimizeEndpoint",
     "optimizeApiKey",

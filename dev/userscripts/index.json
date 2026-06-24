@@ -164,22 +164,6 @@
       "userscriptLength": 1299
     },
     {
-      "id": "chathub",
-      "name": "ChatHub",
-      "enabled": true,
-      "builtIn": true,
-      "configVersion": 47,
-      "hosts": [
-        "app.chathub.gg"
-      ],
-      "pathPrefixes": [
-        "/chat"
-      ],
-      "fallbackMode": "structuredOnly",
-      "userscriptFile": "chathub.js",
-      "userscriptLength": 1387
-    },
-    {
       "id": "notion",
       "name": "Notion",
       "enabled": true,

@@ -73,7 +73,8 @@ This branch adds a Chrome Mod build based on the Simple Chat Hub 2.4.0 CRX paylo
 - Added a Summary Preview hard timeout per iframe and skipped `chrome-error://` browser error pages so broken embedded pages cannot keep collection stuck or contribute browser error text.
 - Upgraded Summary settings from a compact form into a wider management page with API Profile selection, prompt reset, a larger prompt editor, and a Summary Site Configs table modeled after Custom Config.
 - Fixed Summary settings list reordering by preserving hidden form-field watches for Summary site configs and prompt templates, so drag-and-drop updates no longer snap back to the default order.
-- Corrected the built-in Summary script default order to ChatGPT, Claude, Gemini, DeepSeek, Grok, Grok Mirror, Kagi Assistant, ChatHub, Notion, LobeHub, and TypingMind, with a narrow migration for untouched old-default ordering.
+- Corrected the built-in Summary script default order to ChatGPT, Claude, Gemini, DeepSeek, Grok, Grok Mirror, Kagi Assistant, Notion, LobeHub, and TypingMind, with a narrow migration for untouched old-default ordering.
+- Removed the built-in external ChatHub Summary adapter, including cleanup for cached built-in `chathub` site configs.
 - Hardened Optimize Prompt Template and API Profile hidden form-field watches with preserved values, preventing similar drag-and-drop or selector state from snapping back after form normalization.
 - Replaced hard-coded Summary protected-site dispatch with unified `summarySiteConfigs` rules: built-in and custom Summary sites now use the same URL matching, role mapping, and Copy-button extraction configuration, with `structuredOnly` or `allowPageText` fallback behavior per site.
 - Upgraded Optimize settings into the same wider management page pattern with API Profile selection, API Profiles shortcut, prompt reset, larger prompt editor, and a visible optimization-flow note.

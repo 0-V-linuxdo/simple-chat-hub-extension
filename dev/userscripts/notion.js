@@ -56,6 +56,58 @@ const useful = value => {
   if (/^(?:https?:\/\/|mailto:|#)\S{1,240}$/i.test(text)) return "";
   return text;
 };
+const structured = messages => Array.isArray(messages)
+  && messages.some(item => item.role === "user")
+  && messages.some(item => item.role === "assistant");
+const cleanLine = value => normalize(value)
+  .replace(/^[-•]\s*/, "")
+  .replace(/\s+/g, " ")
+  .trim();
+const isChromeLine = line => /^(?:Notion AI|\/|history|Delete, rename, and more…?|Give context|Settings|Gemini\s+\d|Do anything with AI\.{0,3}|Ask anything|Response copied to clipboard|Copied to clipboard|Loading\.?)$/i.test(line);
+const isComposerLine = line => /^(?:Do anything with AI\.{0,3}|Ask anything|Give context|Settings|Gemini\s+\d|Start voice recording|Submit AI message|Response copied to clipboard|Copied to clipboard)$/i.test(line);
+const isMetaLine = line => /^(?:\d+\s*steps?|Today|Yesterday|(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec)\s+\d{1,2}(?:,\s*\d{4})?)$/i.test(line);
+const trimPromptMeta = line => cleanLine(line)
+  .replace(/\s+(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec)\s+\d{1,2}(?:,\s*\d{4})?$/i, "")
+  .replace(/\s+(?:Today|Yesterday)$/i, "")
+  .trim();
+const likelyPrompt = line => /[?？]$|^(?:介绍|搜索|请|帮|写|总结|解释|翻译|生成|分析|列出|查找|Tell|What|How|Why|Please|Search|Summarize|Explain|Write)\b/i.test(line);
+const notionDomTextFallback = () => {
+  const raw = normalize(api.text(root) || root.innerText || root.textContent || "");
+  if (!raw) return [];
+  const lines = [];
+  for (const rawLine of raw.split(/\n+/)) {
+    const line = cleanLine(rawLine);
+    if (!line || line.length < 2) continue;
+    if (isComposerLine(line) && lines.length) break;
+    if (isChromeLine(line)) continue;
+    if (!lines.includes(line)) lines.push(line);
+  }
+  const stepIndex = lines.findIndex(line => /^\d+\s*steps?$/i.test(line));
+  let promptIndex = -1;
+  if (stepIndex > 0) {
+    for (let index = stepIndex - 1; index >= 0; index -= 1) {
+      if (!isMetaLine(lines[index]) && !isChromeLine(lines[index])) {
+        promptIndex = index;
+        break;
+      }
+    }
+  }
+  if (promptIndex < 0) {
+    promptIndex = lines.findIndex((line, index) => index < lines.length - 1 && likelyPrompt(line));
+  }
+  if (promptIndex < 0 || promptIndex >= lines.length - 1) return [];
+  const user = trimPromptMeta(lines[promptIndex]);
+  let answerStart = stepIndex >= 0 ? stepIndex + 1 : promptIndex + 1;
+  while (answerStart < lines.length && isChromeLine(lines[answerStart])) answerStart += 1;
+  const assistant = normalize(lines.slice(answerStart)
+    .filter(line => line !== lines[promptIndex] && line !== user && !isChromeLine(line))
+    .join("\n"));
+  if (user.length < 2 || assistant.length < 20) return [];
+  return [
+    { role: "user", content: user },
+    { role: "assistant", content: assistant }
+  ];
+};
 const turns = [];
 const seen = new Set();
 const buttons = qsa("button,[role=button]", root).filter(isCopyTurnButton).sort(order).slice(0, 48);
@@ -64,7 +116,13 @@ for (const button of buttons) {
   if (role !== "user" && role !== "assistant") continue;
   api.reveal(button);
   await api.sleep(120);
-  const text = useful(await api.copy(button, { copyTimeoutMs: 1600, copyPollMs: 50 }));
+  const text = useful(await api.copy(button, {
+    resetClipboardBeforeCopy: true,
+    acceptUnchangedClipboard: false,
+    copyTimeoutMs: 6000,
+    copyPollMs: 40,
+    copyCaptureGraceMs: 300
+  }));
   if (text) {
     const key = role + "\n" + text.toLowerCase();
     if (!seen.has(key)) {
@@ -75,4 +133,9 @@ for (const button of buttons) {
   await api.sleep(80);
 }
 const merged = api.merge(turns);
-return merged.some(item => item.role === "user") && merged.some(item => item.role === "assistant") ? merged : [];
+if (structured(merged)) return merged;
+if (typeof api.extractNativeCopyConversation === "function") {
+  const copied = await api.extractNativeCopyConversation(root);
+  if (structured(copied)) return copied;
+}
+return notionDomTextFallback();
